@@ -22,7 +22,9 @@ exports.getExpenseByUserId = async (req, res) => {
       //let skipNo = perpage * req.query.skip;
       //const count = await Expense.estimatedDocumentCount();
       const expense = await Expense.find({"userid":req.params.id})
-         .populate(["userid", "category"]);
+         .populate(["userid", "category"])
+         //.skip(parseInt(skipNo))
+         //.limit(parseInt(perpage));
       res.status(200).send(expense);
    }
    catch(e){
