@@ -57,12 +57,14 @@ exports.addExpense = async (req, res) => {
       if(error){
          return res.status(400).json({ message: error.details[0].message });
       }
+      //console.log(req.body);
       const {
          category,
          itemname,
          amount,
          expensemadeon,
          userid,
+         isDeleted,
       } = req.body;
       const newExpense = new Expense({
          category,
@@ -70,9 +72,24 @@ exports.addExpense = async (req, res) => {
          amount,
          expensemadeon,
          userid,
-      })
-      const ans = await newExpense.save();
-      //const ans = await User.findByIdAndUpdate(ans.userid,{"totalexpense":})
+         isDeleted,
+      });
+      await newExpense.save();
+
+      const exp = await User.findById(newExpense.userid);
+      const user = await User.findByIdAndUpdate(newExpense.userid,{"totalexpense":exp.totalexpense+newExpense.amount});
+      const exp1 = await Category.findById(newExpense.category);
+      const catg = await Category.findByIdAndUpdate(newExpense.category,{"totalspent": exp1.totalspent+newExpense.amount});
+
+      res.status(201).json({
+         _id:newExpense._id,
+         category:newExpense.category,
+         itemname:newExpense.itemname,
+         amount:newExpense.amount,
+         expensemadeon:newExpense.expensemadeon,
+         userid:newExpense.userid,
+         isDeleted:newExpense.isDeleted,
+      });
    }
    catch(e){
       res.status(500).json({ message: "Server error." });

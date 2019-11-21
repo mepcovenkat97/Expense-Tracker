@@ -3,7 +3,7 @@ const Joi = require("@hapi/joi");
 
 const validateExpense = expense => {
    const schema = Joi.object().keys({
-      category:Joi.string().optional(),
+      category:Joi.string().required(),
       itemname:Joi.string().required(),
       expensemadeon:Joi.date().required(),
       amount:Joi.number().required(),
