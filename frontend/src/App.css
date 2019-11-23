@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -19,4 +19,14 @@
 
 .App-link {
   color: #09d3ac;
+} */
+@import "https://fonts.googleapis.com/css?family=Quicksand";
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.App {
+  margin: 0 auto;
 }
