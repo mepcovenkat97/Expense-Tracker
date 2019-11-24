@@ -22,7 +22,9 @@ exports.updateUser = async (req, res) => {
 
 exports.updateExpense = async (req, res) => {
    try{
+      console.log("Inside ")
       const id = req.params.id;
+      console.log(id);
       if(req.body.amount)
       {
          const te = await Expense.findById(id);

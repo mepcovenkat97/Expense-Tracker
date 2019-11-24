@@ -17,8 +17,89 @@ import {
    Label,
    Row,
  } from 'reactstrap';
+import { getUser } from '../../apis/storage';
+import { getCategory, addCategory, deleteCategory } from "../../apis/category";
+import { updateBudget } from '../../apis/user';
 
  class Setting extends Component{
+    constructor(props){
+       super(props);
+     this.state = {
+       newcategory:null,
+       category:[],
+    }
+   }
+
+   updateTrigger(){
+      const user = getUser();
+      this.setState({budget:user.user.budget});
+      this.getAllCategory();
+   }
+
+    componentDidMount(){
+       const user = getUser();
+       this.setState({budget:user.user.budget});
+       this.getAllCategory();
+    }
+
+    handleChange = event => {
+       event.preventDefault();
+       console.log(event.target.value);
+       this.setState({[event.target.id]:event.target.value})
+    }
+
+    async getAllCategory(){
+       const catg = await getCategory();
+       this.setState({category:catg.data});
+    }
+
+    deleteHandler = (event, id) => {
+       event.preventDefault();
+       this.deleteSelectedCategory(id);
+    }
+
+    async deleteSelectedCategory(id){
+       try{
+          const catg = await deleteCategory(id);
+          this.updateTrigger();
+       }
+       catch(e){}
+    }
+
+    createHandler = event => {
+       event.preventDefault();
+       this.createCategory();
+    }
+
+   async createCategory(){
+      try{
+         let formdata = [];
+         formdata.push(encodeURIComponent('name')+'='+encodeURIComponent(this.state.newcategory))
+         formdata = formdata.toString();
+         const res = await addCategory(formdata);
+         this.setState({newcategory:null})
+         this.updateTrigger();
+      }
+      catch(e){}
+   }
+
+    updateHandler = event => {
+       event.preventDefault();
+       this.updateUserBudget();
+    }
+
+    async updateUserBudget(){
+       try{
+          const user = getUser();
+          let formdata = [];
+          formdata.push(encodeURIComponent('budget')+'='+encodeURIComponent(this.state.budget))
+          formdata = formdata.toString();
+          const res = await updateBudget(user.user._id,formdata);
+          this.updateTrigger();
+       }
+       catch(e){}
+    }
+
     render(){
        return(
           <>
@@ -30,10 +111,13 @@ import {
                     <Form.Label>Budget</Form.Label>
                     <Form.Control
                       type="number"
+                      id="budget"
                       name="firstName"
+                      value={this.state.budget}
+                      onChange={this.handleChange}
                     />
                   </Form.Group>
-                  <Button variant="primary" type="submit">
+                  <Button variant="primary" type="submit" onClick={this.updateHandler}>
                     Update
                   </Button>
                </Form>
@@ -43,9 +127,15 @@ import {
                <Form>
                   <Form.Group as={Col} md="12" controlId="formBasicEmail">
                     <Form.Label>Category Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Category Name" />
+                    <Form.Control 
+                        id="newcategory" 
+                        type="text" 
+                        value={this.state.newcategory}
+                        placeholder="Enter Category Name"
+                        onChange={this.handleChange}
+                     />
                   </Form.Group>
-                  <Button variant="primary" type="submit">
+                  <Button variant="primary" type="submit" onClick={this.createHandler}>
                     Submit
                   </Button>
                </Form>
@@ -59,19 +149,13 @@ import {
                <p> List of Categories </p>
                
                <ListGroup variant="flush">
-               <ScrollToBottom className="messages" >
-                 <ListGroup.Item>Cras justo odio <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Dapibus ac facilisis in <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Morbi leo risus <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Porta ac consectetur ac <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Vestibulum at eros <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-
-                 <ListGroup.Item>Cras justo odio <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Dapibus ac facilisis in <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Morbi leo risus <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Porta ac consectetur ac <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-                 <ListGroup.Item>Vestibulum at eros <Button size="sm" color="ghost-secondary float-right"><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
-               </ScrollToBottom>
+                  <ScrollToBottom className="messages" >
+                     { this.state.category.map((catg, index) => {
+                        return (
+                           <ListGroup.Item>{ catg.name } <Button size="sm" color="ghost-secondary float-right" onClick={event => this.deleteHandler(event, catg._id)}><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
+                        )
+                     })}  
+                  </ScrollToBottom>
                </ListGroup>
             </Col>
             <Col></Col>

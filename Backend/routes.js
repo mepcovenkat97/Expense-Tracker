@@ -38,6 +38,17 @@ router
       passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
       addUserDataController.addCategory
    )
+   .get(
+      passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
+      getUserDataController.getCategory
+   )
+
+router
+   .route("/category/:id")
+   .delete(
+      passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
+      deleteUserDataController.deleteCategory
+   )
 
 router
    .route("/user/:id")
@@ -52,14 +63,6 @@ router
 
 router
    .route("/expense/:id")
-   .get(
-      //get Expense by User ID
-      passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
-      getUserDataController.getExpenseByUserId
-   )
-
-router
-   .route("/expense/:id")
    .put(
       passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
       updateUserDataController.updateExpense
@@ -68,5 +71,15 @@ router
       passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
       deleteUserDataController.deleteExpense
    )
+
+router
+   .route("/expense/:id")
+   .get(
+      //get Expense by User ID
+      passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
+      getUserDataController.getExpenseByUserId
+   )
+
+
 
 module.exports = router;

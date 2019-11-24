@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
-import {Col,Badge, Pagination,PaginationItem, PaginationLink} from 'reactstrap';
+import React, { Component, useState, useEffect } from 'react';
+import {Badge, Pagination,PaginationItem, PaginationLink} from 'reactstrap';
 import { Pie,Doughnut } from 'react-chartjs-2';
+import { getAllExpense } from '../../apis/expense';
+import Expenserow from '../Row/row';
+import AddExpenseModal from "../Modal/addExpenseModal";
 
 import {
    Button,
    Card,
    CardBody,
-   CardFooter,
    CardHeader,
-   FormGroup,
    Table,
-   Input,
-   Label,
    Row,
+   Col,
  } from 'reactstrap';
+import { getUser } from '../../apis/storage';
 
  const pie = {
    labels: [
@@ -61,7 +62,52 @@ import {
 
 
  class Expense extends Component{
+
+    constructor(props){
+      super(props);
+      this.state = {
+        pie:null,
+        doughnut:null,
+        expenses:[],
+        expense:null,
+        showModal:false,
+      };
+      //this.toggle = this.toggle.bind(this);
+    }
+
+    toggleModel = () => {  
+      const show = !this.state.showModal;
+      this.setState({showModal:show});
+   }
+
+   triggerUpdate(){
+     console.log("Inside Trigger Update");
+     const show = !this.state.showModal;
+     this.setState({showModal:show});
+     this.getExpense();
+     this.render();
+   }
+
+    componentDidMount(){
+      //this.getPieChart();
+      //this.getDoughnutChart();
+      this.getExpense();
+    }
+
+    async getExpense(){
+      try{
+        const user = getUser();
+        //console.log(user.user._id);
+        const res = await getAllExpense(user.user._id);
+        //console.log(res.data);
+        this.setState({expenses:res.data});
+        console.log(this.state.expenses)
+      }
+      catch(e){}
+    }
+
     render(){
+
        return(
          //  <h1>Expense</h1>
          <div>
@@ -95,9 +141,14 @@ import {
             </Row>
             <Card>
             <CardBody>
-            <Button color="success" size="lg">
+            <Button color="success" size="lg" onClick={() => this.toggleModel()}>
                   <i className="fa fa-plus fa-lg"></i>&nbsp;&nbsp;Add Expense
-                </Button>
+            </Button>
+            <AddExpenseModal
+              show = {this.state.showModal}
+              onHide = {this.toggleModel}
+              triggerUpdate = {this.triggerUpdate}
+            />
                 <br/><br/>
               <Table responsive className="text-center">
                   <thead>
@@ -110,51 +161,19 @@ import {
                   </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                     <td><Button size="sm" color="ghost-secondary"><i className="cui-pencil icons font-2xl d-block "></i></Button></td>
-                    <td>Samppa Nori</td>
-                    <td>2012/01/01</td>
-                    <td>Member</td>
-                    <td>
-                      <Badge color="success">Active</Badge>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td><Button size="sm" color="ghost-secondary"><i className="cui-pencil icons font-2xl d-block "></i></Button></td>
-                    <td>Estavan Lykos</td>
-                    <td>2012/02/01</td>
-                    <td>Staff</td>
-                    <td>
-                      <Badge color="danger">Banned</Badge>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td><Button size="sm" color="ghost-secondary"><i className="cui-pencil icons font-2xl d-block "></i></Button></td>
-                    <td>Chetan Mohamed</td>
-                    <td>2012/02/01</td>
-                    <td>Admin</td>
-                    <td>
-                      <Badge color="secondary">Inactive</Badge>
-                    </td>
-                  </tr>
-                  <tr stripped>
-                  <td><Button size="sm" color="ghost-secondary"><i className="cui-pencil icons font-2xl d-block "></i></Button></td>
-                    <td>Derick Maximinus</td>
-                    <td>2012/03/01</td>
-                    <td>Member</td>
-                    <td>
-                      <Badge color="warning">Pending</Badge>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td><Button size="sm" color="ghost-secondary"><i className="cui-pencil icons font-2xl d-block "></i></Button></td>
-                    <td>Friderik Dávid</td>
-                    <td>2012/01/21</td>
-                    <td>Staff</td>
-                    <td>
-                      <Badge color="success">Active</Badge>
-                    </td>
-                  </tr>
+                    {this.state.expenses.map((exp, index)=>{
+                      return (
+                      <Expenserow 
+                        _id={exp._id} 
+                        key={index}
+                        triggerUpdate = {this.triggerUpdate}
+                        category={exp.category.name} 
+                        itemname={exp.itemname} 
+                        amount={exp.amount} 
+                        expensemadeon={exp.expensemadeon.slice(0,10)}
+                        isDeleted={exp.isDeleted}/>
+                        )
+                    })}
                   </tbody>
                 </Table>
                    <Pagination>

@@ -18,3 +18,14 @@ exports.deleteExpense = async (req, res) => {
       res.status(500).send("Internal Server Error");
    }
 }
+
+exports.deleteCategory = async (req, res) => {
+   try{
+      const id = req.params.id;
+      const catg = await Category.findByIdAndDelete(id);
+      res.send(catg);
+   }
+   catch(e){
+      res.status(500).send("Internal Server Error");
+   }
+}
