@@ -80,11 +80,10 @@ exports.addExpense = async (req, res) => {
       const user = await User.findByIdAndUpdate(newExpense.userid,{"totalexpense":exp.totalexpense+newExpense.amount});
       const exp1 = await Category.findById(newExpense.category);
       const catg = await Category.findByIdAndUpdate(newExpense.category,{"totalspent": exp1.totalspent+newExpense.amount});
-      const catgname = exp1.name;
-      const amt = exp.categoryspent.catgname;
-      console.log(exp);
-     // const update = await User.findByIdAndUpdate(newExpense.userid,{"categoryspent":{exp1.name:exp.categoryspent.exp1["name"]+newExpense.amount}});
-
+      console.log("Before Func Call")
+      const key = `categoryspent.${exp1.name}`;
+      const update = await User.findByIdAndUpdate(newExpense.userid,{$inc:{[key]:parseInt(newExpense.amount)}});
+      console.log(update);
 
       res.status(201).json({
          _id:newExpense._id,

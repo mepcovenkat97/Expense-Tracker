@@ -4,8 +4,28 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import { enableExpense } from '../../apis/expense'
 
 export default class EnableExpenseModal extends Component{
+
+   constructor(props){
+      super(props);
+   }
+
+   enableHandler = event => {
+      event.preventDefault();
+      this.enableExpenseHandler();
+   }
+
+   async enableExpenseHandler(){
+      try{
+         const exp = await enableExpense(this.props._id);
+         this.props.onHide();
+         this.props.triggerupdate();
+      }
+      catch(e){}
+   }
+
    render(){
       return(
          <Modal
@@ -35,7 +55,7 @@ export default class EnableExpenseModal extends Component{
                      </Form.Label>
                      <Form.Control type="number" disabled value= {this.props.amount}/>
                   </Form.Group>
-                  <Button type="submit">Enable Expense</Button>
+                  <Button type="submit" onClick={this.enableHandler}>Enable Expense</Button>
                </Form>
             </Modal.Body>
          </Modal>

@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT } from "./types";
+import { LOGIN, LOGOUT, UPDATEBUDGET } from "./types";
 import { saveUser, deleteUser } from "../apis/storage";
 
 export const loginAction = (user, token) => async dispatch => {
@@ -19,3 +19,14 @@ export const logoutAction = () => async dispatch => {
     type: LOGOUT
   });
 };
+
+export const updateBudgetAction = (budget) => async dispatch => {
+  try{
+    //console.log("Inside Redux"+budget);
+    dispatch({
+      type:UPDATEBUDGET,
+      payload: budget
+    })
+  }
+  catch(e){}
+}

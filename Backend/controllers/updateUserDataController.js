@@ -57,6 +57,19 @@ exports.updateExpense = async (req, res) => {
    }
 }
 
+exports.enableExpense = async (req, res) => {
+   try{
+      const id = req.params.id;
+      console.log("User ID "+id);
+      const exp = await Expense.findByIdAndUpdate(id,{"isDeleted":false});
+      const user = await User.findByIdAndUpdate(exp.userid,{$inc:{"totalexpense":exp.amount}}); 
+      res.send(exp);
+   }
+   catch(e){
+      res.status(500).send("Internal Server Error");
+   }
+}
+
 // exports.updateCategory = async (req, res) => {
 //    try{}
 //    catch(e){}

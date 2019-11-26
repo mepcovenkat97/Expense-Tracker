@@ -1,16 +1,7 @@
 import React, { Component } from "react";
-import {
-   Button,
-   Card,
-   CardBody,
-   CardHeader,
-   Table,
-   Row,
-   Col,
-   Badge,
- } from 'reactstrap';
- import ExpenseModal from "../Modal/updateExpenseModal";
- import EnableExpenseModal from "../Modal/enableExpenseModal";
+import { Button } from 'reactstrap';
+import ExpenseModal from "../Modal/updateExpenseModal";
+import EnableExpenseModal from "../Modal/enableExpenseModal";
 
  export default class Expenserow extends Component{
     
@@ -24,7 +15,7 @@ import {
    toggleModel = () => {  
       const show = !this.state.showModal;
       this.setState({showModal:show});
-     // this.props.triggerUpdate();
+      //this.props.triggerupdate();
    }
 
 
@@ -52,7 +43,7 @@ import {
                   category = {this.props.category}
                   show = {this.state.showModal}
                   onHide = {this.toggleModel}
-                  triggerUpdate = {this.props.triggerUpdate}
+                  triggerupdate = {this.props.triggerupdate}
                />
             </tr>
           )
@@ -76,12 +67,13 @@ import {
                  {this.props.expensemadeon}
                </td>
                <EnableExpenseModal
+                  _id={this.props._id}
                   itemname={this.props.itemname}
                   amount={this.props.amount}
                   category = {this.props.category}
                   onHide = {this.toggleModel}
                   show = {this.state.showModal}
-                  triggerUpdate = {this.props.triggerUpdate}
+                  triggerupdate = {this.props.triggerupdate}
                />
             </tr>
           )

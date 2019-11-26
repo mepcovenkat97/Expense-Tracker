@@ -12,6 +12,8 @@ exports.deleteExpense = async (req, res) => {
       const expense = await Expense.findByIdAndUpdate(id,{"isDeleted":true});
       const catg = await Category.findByIdAndUpdate(expense.category,{$inc:{"totalspent":-expense.amount}})
       const user = await User.findByIdAndUpdate(expense.userid,{$inc:{"totalexpense":-expense.amount}})
+      const key = `categoryspent.${catg.name}`;
+      const update = await User.findByIdAndUpdate(expense.userid,{$inc:{[key]:expense.amount}})
       res.send(expense);
    }
    catch(e){

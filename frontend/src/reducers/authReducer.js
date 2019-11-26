@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT } from "../actions/types";
+import { LOGIN, LOGOUT, UPDATEBUDGET } from "../actions/types";
 
 const defaultState = {
   user: null,
@@ -18,6 +18,11 @@ export default (state = defaultState, action) => {
         user: null,
         token: null
       };
+    case UPDATEBUDGET:
+      return {
+        ...state,
+        budget:action.payload
+      }
     default:
       return state;
   }

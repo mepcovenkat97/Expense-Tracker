@@ -73,6 +73,13 @@ router
    )
 
 router
+   .route("/enableexpense/:id")
+   .put(
+      //passport.authenticate(passportConfig.STRATEGY_JWT, { session: false}),
+      updateUserDataController.enableExpense
+   )
+
+router
    .route("/expense/:id")
    .get(
       //get Expense by User ID

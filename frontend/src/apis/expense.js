@@ -12,6 +12,8 @@ export const getAllExpense = async(id) => {
    return res;
 }
 
+
+
 export const addExpense = async data => {
    const token = getAuthToken();
    const res = await axios.post(`${apiUrl}/expense`, data, {
@@ -34,11 +36,21 @@ export const updateExpense = async (id, data) => {
    return res;
 }
 
+export const enableExpense = async (id) => {
+   const token = getAuthToken();
+   const res = await axios.put(`${apiUrl}/enableexpense/${id}`, {
+      headers:{
+         Authorization:token,
+      }
+   })
+   return res;
+}
+
 export const deleteExpense = async (id) => {
    const token = getAuthToken();
    const res = await axios.delete(`${apiUrl}/expense/${id}`,{
       headers:{
-         Authorization:token,
+         Authorization:token
       }
    })
    return res;

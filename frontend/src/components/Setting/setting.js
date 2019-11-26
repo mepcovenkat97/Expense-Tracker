@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import { updateBudgetAction } from "../../actions/authActions";
 import './setting.css';
 
 import {
@@ -20,6 +21,7 @@ import {
 import { getUser } from '../../apis/storage';
 import { getCategory, addCategory, deleteCategory } from "../../apis/category";
 import { updateBudget } from '../../apis/user';
+import { connect } from "react-redux";
 
  class Setting extends Component{
     constructor(props){
@@ -96,6 +98,7 @@ import { updateBudget } from '../../apis/user';
        try{
           const user = getUser();
           user.user.budget = this.state.budget;
+          this.props.updateBudgetAction(this.state.budget);
           let formdata = [];
           formdata.push(encodeURIComponent('budget')+'='+encodeURIComponent(this.state.budget))
           formdata = formdata.toString();
@@ -172,4 +175,7 @@ import { updateBudget } from '../../apis/user';
     }
  }
 
- export default Setting;
+ export default connect(
+    null,
+    {updateBudgetAction}
+ )(Setting);

@@ -42,6 +42,11 @@ import { getUserDetails } from '../../apis/user';
       this.getExpense();
    }
 
+   triggerupdate = () => {
+    console.log("Inside Trigger Update");
+    this.getExpense();
+  }
+
     componentDidMount(){
       this.getExpense();
     }
@@ -93,10 +98,6 @@ import { getUserDetails } from '../../apis/user';
       //this.setState({doughnut:doughnut})
     }
 
-    triggerupdate(){
-      console.log("Inside Trigger Update")
-      this.getExpense()
-    }
 
     async getExpense(){
       try{
@@ -109,6 +110,11 @@ import { getUserDetails } from '../../apis/user';
     }
 
     render(){
+      const rowStyle = {
+        width:"10px",
+        height:"10px",
+        backgroundColor:"red"//"rgb(250, 177, 177)"
+     }
 
        return(
          //  <h1>Expense</h1>
@@ -148,8 +154,9 @@ import { getUserDetails } from '../../apis/user';
             <AddExpenseModal
               show = {this.state.showModal}
               onHide = {this.toggleModel}
-              triggerUpdate={this.triggerupdate}
+              triggerupdate={this.triggerupdate}
             />
+            <span className="float-right"><span style={rowStyle}>&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;-&nbsp;Deleted Expense<br/> </span>
                 <br/><br/>
               <Table responsive className="text-center">
                   <thead>
@@ -171,7 +178,7 @@ import { getUserDetails } from '../../apis/user';
                         itemname={exp.itemname} 
                         amount={exp.amount} 
                         expensemadeon={exp.expensemadeon.slice(0,10)}
-                        triggerUpdate={this.triggerupdate}
+                        triggerupdate={this.triggerupdate}
                         isDeleted={exp.isDeleted}/>
                         )
                     })}

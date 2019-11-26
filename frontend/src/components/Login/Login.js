@@ -33,8 +33,8 @@ class Login extends Component {
     try {
       await auth.authenticate(credentials);
       const { user, token } = auth;
-      //this.props.loginAction(user, token);
-      saveUser(user,token)
+      this.props.loginAction(user, token);
+      //saveUser(user,token)
       this.props.history.push("/dashboard/expense");
       auth.isAuth = false;
     } catch (e) {

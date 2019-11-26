@@ -24,6 +24,7 @@ export default class ExpenseModal extends Component{
       try{
          const res = await deleteExpense(this.props._id);
          this.props.onHide();
+         this.props.triggerupdate();
       }
       catch(e){}
    }
@@ -47,8 +48,9 @@ export default class ExpenseModal extends Component{
          formdata.push(encodeURIComponent('amount')+'='+encodeURIComponent(this.state.amount))
          formdata = formdata.toString();
          const res = await updateExpense(this.props._id,formdata);
+         console.log(res);
          this.props.onHide();
-         this.props.triggerUpdate();
+         this.props.triggerupdate();
       }
       catch(e){}
    }
