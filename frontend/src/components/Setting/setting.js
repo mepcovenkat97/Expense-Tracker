@@ -79,6 +79,8 @@ import { connect } from "react-redux";
 
    async createCategory(){
       try{
+         const user = getUser();
+         let catg = user.user.categoryspent;
          let formdata = [];
          formdata.push(encodeURIComponent('name')+'='+encodeURIComponent(this.state.newcategory))
          formdata = formdata.toString();

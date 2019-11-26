@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form'
+import { getUser } from '../../apis/storage';
 import {
    Card,
    CardBody,
@@ -9,6 +10,7 @@ import {
 
  class Profile extends Component{
     render(){
+      const user = getUser();
        return(
           <>
             <br />
@@ -22,7 +24,7 @@ import {
                               Name
                             </Form.Label>
                             <Col sm="9">
-                              <Form.Control plaintext readOnly defaultValue="Name" />
+                              <Form.Control plaintext readOnly defaultValue={user.user.name} />
                             </Col>
                           </Form.Group>
                           <Form.Group as={Row} controlId="formPlaintextEmail">
@@ -30,7 +32,7 @@ import {
                               Email
                             </Form.Label>
                             <Col sm="9">
-                              <Form.Control plaintext readOnly defaultValue="Name@email.com" />
+                              <Form.Control plaintext readOnly defaultValue={user.user.email} />
                             </Col>
                           </Form.Group>
                           <Form.Group as={Row} controlId="formPlaintextEmail">
@@ -38,7 +40,7 @@ import {
                               Budget
                             </Form.Label>
                             <Col sm="9">
-                              <Form.Control plaintext readOnly defaultValue="Budget" />
+                              <Form.Control plaintext readOnly defaultValue={user.user.budget} />
                             </Col>
                           </Form.Group>
                      </CardBody>
