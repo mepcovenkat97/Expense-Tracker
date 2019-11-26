@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { loginAction } from "../../actions/authActions";
 
 import auth from "../../apis/auth";
-import { saveUser, getUser } from "../../apis/storage";
+//import { saveUser, getUser } from "../../apis/storage";
 
 class Login extends Component {
   state = {
@@ -83,24 +83,16 @@ class Login extends Component {
                   onClick={this.forgotPasswordHandler}
                   className="link"
                 >
-                  Forgot your password?
+                  Need an Account ?
                 </p>
               </div>
             </div>
           </form>
         </div>
       );
-   }// else {
-    //   const user = getUser();
-    //   if(user.user.type == "admin")
-    //   {
-    //     showLogin = <Redirect to="/dashboard/workspace" />;
-    //   }
-    //   else
-    //   {
-    //     showLogin = <Redirect to="/userdashboard" />
-    //   }
-    // }
+   } else {
+      showLogin = <Redirect to="/dashboard/expense"/>
+    }
     return <div className="app flex-row align-items-center">{showLogin}</div>;
   }
 }

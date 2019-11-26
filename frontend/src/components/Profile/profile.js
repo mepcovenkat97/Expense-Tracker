@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import {Col, Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap';
 import Form from 'react-bootstrap/Form'
 import {
-   Button,
    Card,
    CardBody,
-   CardFooter,
-   CardHeader,
-   FormGroup,
-   Table,
-   Input,
-   Label,
    Row,
+   Col,
  } from 'reactstrap';
 
  class Profile extends Component{

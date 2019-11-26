@@ -5,6 +5,8 @@ import Row from 'react-bootstrap/Row'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { enableExpense } from '../../apis/expense'
+import { getUser } from '../../apis/storage'
+
 
 export default class EnableExpenseModal extends Component{
 
@@ -19,6 +21,9 @@ export default class EnableExpenseModal extends Component{
 
    async enableExpenseHandler(){
       try{
+         let user = getUser();
+         user.user.totalexpense = (parseInt(user.user.totalexpense) + parseInt(this.props.amount)).toString();
+         localStorage.setItem("ExpenseToken",JSON.stringify(user));
          const exp = await enableExpense(this.props._id);
          this.props.onHide();
          this.props.triggerupdate();

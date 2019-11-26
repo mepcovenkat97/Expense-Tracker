@@ -1,10 +1,10 @@
 import React,{ Component } from 'react'
 import Modal from 'react-bootstrap/Modal'
-import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { updateExpense,deleteExpense } from "../../apis/expense";
+import { getUser } from '../../apis/storage'
 
 export default class ExpenseModal extends Component{
 
@@ -22,6 +22,9 @@ export default class ExpenseModal extends Component{
 
    async deleteExpense(){
       try{
+         let user = getUser();
+         user.user.totalexpense = (parseInt(user.user.totalexpense) - parseInt(this.props.amount)).toString();
+         localStorage.setItem("ExpenseToken",JSON.stringify(user));
          const res = await deleteExpense(this.props._id);
          this.props.onHide();
          this.props.triggerupdate();
@@ -43,12 +46,26 @@ export default class ExpenseModal extends Component{
 
    async updateExpenseDetails()
    {
-      try{ 
+      try{
+         let user = getUser();
+         if(parseInt(this.state.amount) > parseInt(this.props.amount))
+            user.user.totalexpense = ((parseInt(user.user.totalexpense)-parseInt(this.props.amount)) + parseInt(this.state.amount)).toString();
+         else
+            user.user.totalexpense = (parseInt(user.user.totalexpense)-(parseInt(this.props.amount)-parseInt(this.state.amount))).toString();
+         
+         let catgspt = user.user.categoryspent;
+         let temp = catgspt[`${this.props.category}`];
+         console.log(temp);
+         if(parseInt(this.state.amount) > parseInt(this.props.amount))
+            catgspt[`${this.props.category}`] = (temp - parseInt(this.props.amount))+parseInt(this.state.amount);
+         else
+            catgspt[`${this.props.category}`] = temp - (parseInt(this.props.amount)-parseInt(this.state.amount));
+         user.user.categoryspent = catgspt;  
+         localStorage.setItem("ExpenseToken",JSON.stringify(user));
          let formdata = [];
          formdata.push(encodeURIComponent('amount')+'='+encodeURIComponent(this.state.amount))
          formdata = formdata.toString();
          const res = await updateExpense(this.props._id,formdata);
-         console.log(res);
          this.props.onHide();
          this.props.triggerupdate();
       }

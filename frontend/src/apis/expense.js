@@ -2,7 +2,17 @@ import apiUrl from "./apiUrl";
 import axios from "axios";
 import { getAuthToken } from "./storage";
 
-export const getAllExpense = async(id) => {
+export const getAllExpense = async(id,page) => {
+   const token = getAuthToken();
+   const res = await axios.get(`${apiUrl}/expense/${id}?limit=5&skip=${page}`,{
+      headers:{
+         Authorization:token
+      }
+   })
+   return res;
+}
+
+export const getAllExpenses = async(id) => {
    const token = getAuthToken();
    const res = await axios.get(`${apiUrl}/expense/${id}`,{
       headers:{

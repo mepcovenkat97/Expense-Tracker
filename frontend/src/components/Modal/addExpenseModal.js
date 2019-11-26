@@ -1,14 +1,12 @@
 import React,{ Component } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { Input } from 'reactstrap';
-import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { addExpense } from "../../apis/expense";
 import { getUser } from '../../apis/storage'
 import { getCategory } from "../../apis/category";
-import CategoryDropDown from "../Dropdown/dropdown";
 
 export default class AddExpenseModal extends Component{
 
@@ -51,6 +49,8 @@ export default class AddExpenseModal extends Component{
          console.log("Inside API")
          let user = getUser();
          user.user.totalexpense = (parseInt(user.user.totalexpense) + parseInt(this.state.amount)).toString();
+         
+         //catg[`${this.state.category}`]
          localStorage.setItem("ExpenseToken",JSON.stringify(user));
          let formdata = [];
          formdata.push(encodeURIComponent('category')+'='+encodeURIComponent(this.state.category))

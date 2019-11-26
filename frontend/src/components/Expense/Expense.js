@@ -1,9 +1,11 @@
-import React, { Component, Suspense } from 'react';
-import {Badge, Pagination,PaginationItem, PaginationLink} from 'reactstrap';
+import React, { Component } from 'react';
+import ReactPaginate from "react-paginate";
+//import {Badge, Pagination,PaginationItem, PaginationLink} from 'reactstrap';
 import { Pie,Doughnut } from 'react-chartjs-2';
-import { getAllExpense } from '../../apis/expense';
+import { getAllExpenses,getAllExpense } from '../../apis/expense';
 import Expenserow from '../Row/row';
 import AddExpenseModal from "../Modal/addExpenseModal";
+import './Expense.css';
 
 import {
    Button,
@@ -28,6 +30,7 @@ import { getUserDetails } from '../../apis/user';
         changed:false,
         doughnut:null,
         pie:null,
+        perPage: 5,
       };
       this.toggleModel = this.toggleModel.bind(this);
     }
@@ -39,16 +42,21 @@ import { getUserDetails } from '../../apis/user';
     toggleModel = () => {  
       const show = !this.state.showModal;
       this.setState({showModal:show});
-      this.getExpense();
+      //this.getExpense();
+      this.getTenExpenses(0);
    }
 
    triggerupdate = () => {
     console.log("Inside Trigger Update");
     this.getExpense();
+    this.getTenExpenses(0);
+    this.getDoughnut();
+    this.getPieChart();
   }
 
     componentDidMount(){
       this.getExpense();
+      this.getTenExpenses(0);
     }
 
     getPieChart(){
@@ -70,6 +78,7 @@ import { getUserDetails } from '../../apis/user';
           }
         ]
       }
+      console.log(pie);
       return pie;
       //this.setState({pie:pie});
     }
@@ -81,7 +90,7 @@ import { getUserDetails } from '../../apis/user';
         labels :["Spent", "Remaining"],
         datasets:[
           {
-            data:[user1.user.totalexpense,user1.user.budget],
+            data:[user1.user.totalexpense,(user1.user.budget-user1.user.totalexpense)],
             backgroundColor:[
               '#FF6384',
               '#36A2EB',
@@ -98,21 +107,41 @@ import { getUserDetails } from '../../apis/user';
       //this.setState({doughnut:doughnut})
     }
 
+    handlePageClick = data => {
+      const pageNumber = data.selected;
+      this.setState({ pageNumber });
+      this.getTenExpenses(pageNumber);
+      console.log("selected", data.selected);
+      // this.setState({ selectedPage: selectedPage });
+    };
+
+    async getTenExpenses(pagenumber){
+      try{
+        const user = getUser();
+        const response = await getAllExpense(user.user._id, pagenumber);
+        this.setState({expenses:response.data});
+        this.props.countPostsAction(response.data.count);
+        const totalPages = Math.ceil(response.data.count / this.state.perPage);
+        this.setState({ pageCount: totalPages });
+      }
+      catch(e){}
+    }
+
 
     async getExpense(){
       try{
         console.log("Inside Get Expense");
         const user = getUser();
-        const res = await getAllExpense(user.user._id);
-        this.setState({expenses:res.data});
+        const res = await getAllExpenses(user.user._id);
+        console.log(res.data.length);
+
+        //this.setState({pageCount:(res.data.length/5)+1});
       }
       catch(e){}
     }
 
     render(){
       const rowStyle = {
-        width:"10px",
-        height:"10px",
         backgroundColor:"red"//"rgb(250, 177, 177)"
      }
 
@@ -158,52 +187,57 @@ import { getUserDetails } from '../../apis/user';
             />
             <span className="float-right"><span style={rowStyle}>&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;-&nbsp;Deleted Expense<br/> </span>
                 <br/><br/>
-              <Table responsive className="text-center">
-                  <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Category</th>
-                    <th>Item Name</th>
-                    <th>Amount</th>
-                    <th>Expense Date</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.expenses.map((exp, index)=>{
-                      return (
-                      <Expenserow 
-                        _id={exp._id} 
-                        key={index}
-                        category={exp.category.name} 
-                        itemname={exp.itemname} 
-                        amount={exp.amount} 
-                        expensemadeon={exp.expensemadeon.slice(0,10)}
-                        triggerupdate={this.triggerupdate}
-                        isDeleted={exp.isDeleted}/>
-                        )
-                    })}
-                  </tbody>
-                </Table>
-                   <Pagination>
-                     <PaginationItem>
-                       <PaginationLink previous tag="button"></PaginationLink>
-                     </PaginationItem>
-                     <PaginationItem active>
-                       <PaginationLink tag="button">1</PaginationLink>
-                     </PaginationItem>
-                     <PaginationItem>
-                       <PaginationLink tag="button">2</PaginationLink>
-                     </PaginationItem>
-                     <PaginationItem>
-                       <PaginationLink tag="button">3</PaginationLink>
-                     </PaginationItem>
-                     <PaginationItem>
-                       <PaginationLink tag="button">4</PaginationLink>
-                     </PaginationItem>
-                     <PaginationItem>
-                       <PaginationLink next tag="button"></PaginationLink>
-                     </PaginationItem>
-                   </Pagination>
+                  {
+                    (this.state.expenses.length > 0)
+                      ?(
+                        <>
+                        <Table responsive className="text-center">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Category</th>
+                              <th>Item Name</th>
+                              <th>Amount</th>
+                              <th>Expense Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              this.state.expenses.map((exp, index)=>{
+                                return (
+                                <Expenserow 
+                                  _id={exp._id} 
+                                  key={index}
+                                  category={exp.category.name} 
+                                  itemname={exp.itemname} 
+                                  amount={exp.amount} 
+                                  expensemadeon={exp.expensemadeon.slice(0,10)}
+                                  triggerupdate={this.triggerupdate}
+                                  isDeleted={exp.isDeleted}/>
+                                  )
+                              })
+                            }
+                          </tbody>
+                        </Table>
+
+                        <ReactPaginate
+                          previousLabel={"← Previous"}
+                          nextLabel={"Next →"}
+                          breakLabel={<span className="gap">...</span>}
+                          pageCount={this.state.pageCount}
+                          onPageChange={this.handlePageClick}
+                          containerClassName={"pagination"}
+                          previousLinkClassName={"previous_page"}
+                          nextLinkClassName={"next_page"}
+                          disabledClassName={"disabled"}
+                          activeClassName={"active"}
+                        />
+
+                        </>
+                    ):(
+                      (<h1>No Expenses Made Till Now</h1>)
+                    )}
+                
                </CardBody>
             </Card>
          <br />
