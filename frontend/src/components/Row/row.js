@@ -13,14 +13,18 @@ import {
  import EnableExpenseModal from "../Modal/enableExpenseModal";
 
  export default class Expenserow extends Component{
-
-   state = {
-      showModal:false,
+    
+   constructor(props){
+      super(props);
+      this.state = {
+         showModal:false,
+      }
    }
    
    toggleModel = () => {  
       const show = !this.state.showModal;
       this.setState({showModal:show});
+     // this.props.triggerUpdate();
    }
 
 
@@ -43,12 +47,12 @@ import {
                </td>
                <ExpenseModal
                   _id={this.props._id}
-                  triggerUpdate={this.props.triggerUpdate}
                   itemname={this.props.itemname}
                   amount={this.props.amount}
                   category = {this.props.category}
                   show = {this.state.showModal}
                   onHide = {this.toggleModel}
+                  triggerUpdate = {this.props.triggerUpdate}
                />
             </tr>
           )
@@ -74,10 +78,10 @@ import {
                <EnableExpenseModal
                   itemname={this.props.itemname}
                   amount={this.props.amount}
-                  triggerUpdate={this.props.triggerUpdate}
                   category = {this.props.category}
                   onHide = {this.toggleModel}
                   show = {this.state.showModal}
+                  triggerUpdate = {this.props.triggerUpdate}
                />
             </tr>
           )

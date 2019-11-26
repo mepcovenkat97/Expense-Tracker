@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, Suspense } from 'react';
 import {Badge, Pagination,PaginationItem, PaginationLink} from 'reactstrap';
 import { Pie,Doughnut } from 'react-chartjs-2';
 import { getAllExpense } from '../../apis/expense';
@@ -15,93 +15,95 @@ import {
    Col,
  } from 'reactstrap';
 import { getUser } from '../../apis/storage';
-
- const pie = {
-   labels: [
-     'Red',
-     'Green',
-     'Yellow',
-   ],
-   datasets: [
-     {
-       data: [300, 50, 100],
-       backgroundColor: [
-         '#FF6384',
-         '#36A2EB',
-         '#FFCE56',
-       ],
-       hoverBackgroundColor: [
-         '#FF6384',
-         '#36A2EB',
-         '#FFCE56',
-       ],
-     }],
- };
-
- const doughnut = {
-   labels: [
-     'Red',
-     'Green',
-     'Yellow',
-   ],
-   datasets: [
-     {
-       data: [300, 50, 100],
-       backgroundColor: [
-         '#FF6384',
-         '#36A2EB',
-         '#FFCE56',
-       ],
-       hoverBackgroundColor: [
-         '#FF6384',
-         '#36A2EB',
-         '#FFCE56',
-       ],
-     }],
- };
-
+import { getUserDetails } from '../../apis/user';
 
  class Expense extends Component{
 
     constructor(props){
       super(props);
       this.state = {
-        pie:null,
-        doughnut:null,
         expenses:[],
         expense:null,
         showModal:false,
+        changed:false,
+        doughnut:null,
+        pie:null,
       };
-      //this.toggle = this.toggle.bind(this);
+      this.toggleModel = this.toggleModel.bind(this);
     }
+
+    loading = () => (
+      <div className="animated fadeIn pt-1 text-center">Loading...</div>
+    );
 
     toggleModel = () => {  
       const show = !this.state.showModal;
       this.setState({showModal:show});
-   }
-
-   triggerUpdate(){
-     console.log("Inside Trigger Update");
-     const show = !this.state.showModal;
-     this.setState({showModal:show});
-     this.getExpense();
-     this.render();
+      this.getExpense();
    }
 
     componentDidMount(){
-      //this.getPieChart();
-      //this.getDoughnutChart();
       this.getExpense();
+    }
+
+    getPieChart(){
+      const user1 = getUser();
+      const pie = {
+        labels :Object.keys(user1.user.categoryspent),
+        datasets:[
+          {
+            data:Object.values(user1.user.categoryspent),
+            backgroundColor:[
+              '#FF6384',
+              '#36A2EB',
+            ],
+            hoverBackgroundColor:[
+              '#FF6384',
+              '#36A2EB',
+            ],
+            borderWidth: 1
+          }
+        ]
+      }
+      return pie;
+      //this.setState({pie:pie});
+    }
+
+    getDoughnut(){
+      const user1 = getUser();
+      //const user = await getUserDetails(user1.user._id);
+      const doughnut = {
+        labels :["Spent", "Remaining"],
+        datasets:[
+          {
+            data:[user1.user.totalexpense,user1.user.budget],
+            backgroundColor:[
+              '#FF6384',
+              '#36A2EB',
+            ],
+            hoverBackgroundColor:[
+              '#FF6384',
+              '#36A2EB',
+            ],
+            borderWidth: 5
+          }
+        ]
+      }
+      return doughnut
+      //this.setState({doughnut:doughnut})
+    }
+
+    triggerupdate(){
+      console.log("Inside Trigger Update")
+      this.getExpense()
     }
 
     async getExpense(){
       try{
+        console.log("Inside Get Expense");
         const user = getUser();
-        //console.log(user.user._id);
         const res = await getAllExpense(user.user._id);
-        //console.log(res.data);
         this.setState({expenses:res.data});
-        console.log(this.state.expenses)
       }
       catch(e){}
     }
@@ -120,7 +122,7 @@ import { getUser } from '../../apis/storage';
               </CardHeader>
               <CardBody>
               <div className="chart-wrapper">
-                <Pie data={pie} />
+                    <Doughnut data={this.getDoughnut()} />
               </div>
               </CardBody>
             </Card>
@@ -132,8 +134,7 @@ import { getUser } from '../../apis/storage';
               </CardHeader>
               <CardBody>
               <div className="chart-wrapper">
-                <Doughnut data={doughnut} />
-                {console.log(doughnut)}
+                <Pie data={this.getPieChart()} />
               </div>
               </CardBody>
             </Card>
@@ -147,7 +148,7 @@ import { getUser } from '../../apis/storage';
             <AddExpenseModal
               show = {this.state.showModal}
               onHide = {this.toggleModel}
-              triggerUpdate = {this.triggerUpdate}
+              triggerUpdate={this.triggerupdate}
             />
                 <br/><br/>
               <Table responsive className="text-center">
@@ -166,11 +167,11 @@ import { getUser } from '../../apis/storage';
                       <Expenserow 
                         _id={exp._id} 
                         key={index}
-                        triggerUpdate = {this.triggerUpdate}
                         category={exp.category.name} 
                         itemname={exp.itemname} 
                         amount={exp.amount} 
                         expensemadeon={exp.expensemadeon.slice(0,10)}
+                        triggerUpdate={this.triggerupdate}
                         isDeleted={exp.isDeleted}/>
                         )
                     })}

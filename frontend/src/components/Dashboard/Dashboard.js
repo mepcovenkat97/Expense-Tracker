@@ -79,9 +79,9 @@ import routes from "../../routes";
 import { connect } from "react-redux";
 import { deleteUser } from "../../apis/storage";
 
-// import { logoutAction } from "../../actions/authActions";
+import { logoutAction } from "../../actions/authActions";
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
   loading = () => (
     <div className="animated fadeIn pt-1 text-center">Loading...</div>
   );
@@ -144,10 +144,8 @@ export default class Dashboard extends Component {
             <React.Fragment>
               <span>&copy; 2019 creativeLabs.</span>
               <span className="ml-auto">
-                Powered by{" "}
-                <a href="https://techzillaindia.com">
-                  Techzilla India Infotech
-                </a>
+                Created By{" "}
+                  D.R.Venkateshwar
               </span>
             </React.Fragment>
           </Suspense>
@@ -156,3 +154,14 @@ export default class Dashboard extends Component {
     );
   }
 }
+
+
+const mapStateToProps = ({ auth }) => ({
+  user: auth.user
+});
+
+
+export default connect(
+  mapStateToProps,
+  { logoutAction }
+)(Dashboard);

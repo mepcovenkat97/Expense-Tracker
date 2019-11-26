@@ -33,3 +33,13 @@ export const updateExpense = async (id, data) => {
    })
    return res;
 }
+
+export const deleteExpense = async (id) => {
+   const token = getAuthToken();
+   const res = await axios.delete(`${apiUrl}/expense/${id}`,{
+      headers:{
+         Authorization:token,
+      }
+   })
+   return res;
+}

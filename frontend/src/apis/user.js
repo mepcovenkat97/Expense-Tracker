@@ -10,4 +10,15 @@ export const updateBudget = async (id, data) => {
          'Content-Type':"application/x-www-form-urlencoded"
       }
    })
+   return res;
+}
+
+export const getUserDetails = async (id) => {
+   const token = getAuthToken();
+   const res = await axios.get(`${apiUrl}/user/${id}`,{
+      headers:{
+         Authorization:token,
+      }
+   })
+   return res;
 }

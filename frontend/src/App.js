@@ -9,7 +9,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 import { getUser } from "./apis/storage";
-
+import store from "./store/store";
 
 //import ForgotPassword from "./components/ForgotPassword/ForgotPassword";;
 
@@ -25,6 +25,7 @@ export default class App extends React.Component {
 
   render() {
     return (
+      <Provider store={store}>
         <div className="App">
           <Switch>
             {/* <Route path="/forgotpassword" component={ForgotPassword} /> */}
@@ -34,6 +35,7 @@ export default class App extends React.Component {
             ))}
           </Switch>
         </div>
+        </Provider>
     );
   }
 }

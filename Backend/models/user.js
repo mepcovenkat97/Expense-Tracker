@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
    password:{type:String},
    budget:{type:Number},
    totalexpense:{type:Number},
+   categoryspent:{type:Object},
 })
 
 userSchema.pre("save", async function(next) {

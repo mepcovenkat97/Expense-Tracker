@@ -57,7 +57,6 @@ exports.addExpense = async (req, res) => {
       if(error){
          return res.status(400).json({ message: error.details[0].message });
       }
-      console.log(req.body);
       const {
          category,
          itemname,
@@ -75,17 +74,17 @@ exports.addExpense = async (req, res) => {
          userid,
          isDeleted,
       });
-      console.log(newExpense);
       await newExpense.save();
 
       const exp = await User.findById(newExpense.userid);
-      console.log(exp);
       const user = await User.findByIdAndUpdate(newExpense.userid,{"totalexpense":exp.totalexpense+newExpense.amount});
-      console.log(user);
       const exp1 = await Category.findById(newExpense.category);
-      console.log(exp1);
       const catg = await Category.findByIdAndUpdate(newExpense.category,{"totalspent": exp1.totalspent+newExpense.amount});
-      console.log(catg);
+      const catgname = exp1.name;
+      const amt = exp.categoryspent.catgname;
+      console.log(exp);
+     // const update = await User.findByIdAndUpdate(newExpense.userid,{"categoryspent":{exp1.name:exp.categoryspent.exp1["name"]+newExpense.amount}});
+
 
       res.status(201).json({
          _id:newExpense._id,

@@ -50,6 +50,8 @@ export default class AddExpenseModal extends Component{
       try{
          console.log("Inside API")
          let user = getUser();
+         user.user.totalexpense = (parseInt(user.user.totalexpense) + parseInt(this.state.amount)).toString();
+         localStorage.setItem("ExpenseToken",JSON.stringify(user));
          let formdata = [];
          formdata.push(encodeURIComponent('category')+'='+encodeURIComponent(this.state.category))
          formdata.push(encodeURIComponent('itemname')+'='+encodeURIComponent(this.state.itemname))
@@ -58,9 +60,8 @@ export default class AddExpenseModal extends Component{
          formdata.push(encodeURIComponent('userid')+'='+encodeURIComponent(user.user._id));
          formdata.push(encodeURIComponent('isDeleted')+'='+encodeURIComponent(false));
          formdata = formdata.join("&")
-         console.log(formdata);
-         console.log(formdata);
          const response  = await addExpense(formdata);
+         this.props.onHide();
          this.props.triggerUpdate();
       }
       catch(e){}

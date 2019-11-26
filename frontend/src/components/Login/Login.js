@@ -7,7 +7,7 @@ import { loginAction } from "../../actions/authActions";
 import auth from "../../apis/auth";
 import { saveUser, getUser } from "../../apis/storage";
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     email: "",
     password: "",
@@ -104,3 +104,10 @@ export default class Login extends Component {
     return <div className="app flex-row align-items-center">{showLogin}</div>;
   }
 }
+
+
+//export default Login;
+export default connect(
+  null,
+  { loginAction }
+)(Login)

@@ -60,7 +60,11 @@ import { updateBudget } from '../../apis/user';
 
     async deleteSelectedCategory(id){
        try{
-          const catg = await deleteCategory(id);
+          let catg;
+          if(window.confirm("Are you Sure ?") === true){
+               catg = await deleteCategory(id);}
+          else{
+               console.log("Hai");}
           this.updateTrigger();
        }
        catch(e){}
@@ -91,9 +95,11 @@ import { updateBudget } from '../../apis/user';
     async updateUserBudget(){
        try{
           const user = getUser();
+          user.user.budget = this.state.budget;
           let formdata = [];
           formdata.push(encodeURIComponent('budget')+'='+encodeURIComponent(this.state.budget))
           formdata = formdata.toString();
+          localStorage.setItem("ExpenseToken",JSON.stringify(user));
           const res = await updateBudget(user.user._id,formdata);
           this.updateTrigger();
        }

@@ -12,6 +12,7 @@ exports.userLogin = async (req, res) => {
             name:user.name,
             budget:user.budget,
             totalexpense:user.totalexpense,
+            categoryspent:user.categoryspent,
          }
       });
    }

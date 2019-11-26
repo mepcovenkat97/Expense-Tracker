@@ -4,15 +4,29 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { updateExpense } from "../../apis/expense";
+import { updateExpense,deleteExpense } from "../../apis/expense";
 
 export default class ExpenseModal extends Component{
 
-   state = {
+   constructor(props){
+      super(props);
+   this.state = {
       amount:this.props.amount,
    }
+}
 
-   componentDidMount(){console.log(this.props._id)}
+   deleteHandler = event => {
+      event.preventDefault();
+      this.deleteExpense();
+   }
+
+   async deleteExpense(){
+      try{
+         const res = await deleteExpense(this.props._id);
+         this.props.onHide();
+      }
+      catch(e){}
+   }
 
    handleChange = event => {
       event.preventDefault();
@@ -28,11 +42,12 @@ export default class ExpenseModal extends Component{
 
    async updateExpenseDetails()
    {
-      try{
+      try{ 
          let formdata = [];
          formdata.push(encodeURIComponent('amount')+'='+encodeURIComponent(this.state.amount))
          formdata = formdata.toString();
          const res = await updateExpense(this.props._id,formdata);
+         this.props.onHide();
          this.props.triggerUpdate();
       }
       catch(e){}
@@ -67,7 +82,9 @@ export default class ExpenseModal extends Component{
                      </Form.Label>
                      <Form.Control type="number" id="amount" value={this.state.amount} onChange={this.handleChange}/>
                   </Form.Group>
-                  <Button type="submit" onClick={this.updateHandler}>Update Expense Details</Button>
+                  <Button type="submit" onClick={this.updateHandler}>Update Expense</Button>
+                  <br/>
+                  <Button className="btn btn-danger" type="submit" onClick={this.deleteHandler}>Delete Expense</Button>
                </Form>
             </Modal.Body>
          </Modal>
