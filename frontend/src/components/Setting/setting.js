@@ -55,16 +55,21 @@ import { connect } from "react-redux";
        this.setState({category:catg.data});
     }
 
-    deleteHandler = (event, id) => {
+    deleteHandler = (event, id, name) => {
        event.preventDefault();
-       this.deleteSelectedCategory(id);
+       this.deleteSelectedCategory(id, name);
     }
 
-    async deleteSelectedCategory(id){
+    async deleteSelectedCategory(id, name){
        try{
           let catg;
-          if(window.confirm("Are you Sure ?") === true){
-               catg = await deleteCategory(id);}
+          if(window.confirm("Are you Sure ?") === true)
+          {
+               catg = await deleteCategory(id);
+               const user = getUser();
+               delete user.user.categoryspent[`${name}`];
+               localStorage.setItem("ExpenseToken", JSON.stringify(user))
+          }
           else{
                console.log("Hai");}
           this.updateTrigger();
@@ -81,6 +86,10 @@ import { connect } from "react-redux";
       try{
          const user = getUser();
          let catg = user.user.categoryspent;
+         catg[`${this.state.newcategory}`] = 0;
+         user.user.categoryspent = catg;
+         console.log(user)
+         localStorage.setItem("ExpenseToken",JSON.stringify(user));
          let formdata = [];
          formdata.push(encodeURIComponent('name')+'='+encodeURIComponent(this.state.newcategory))
          formdata = formdata.toString();
@@ -163,7 +172,7 @@ import { connect } from "react-redux";
                   <ScrollToBottom className="messages" >
                      { this.state.category.map((catg, index) => {
                         return (
-                           <ListGroup.Item>{ catg.name } <Button size="sm" color="ghost-secondary float-right" onClick={event => this.deleteHandler(event, catg._id)}><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
+                           <ListGroup.Item>{ catg.name } <Button size="sm" color="ghost-secondary float-right" onClick={event => this.deleteHandler(event, catg._id, catg.name)}><i className="fa fa-trash-o fa-lg "></i></Button></ListGroup.Item>
                         )
                      })}  
                   </ScrollToBottom>

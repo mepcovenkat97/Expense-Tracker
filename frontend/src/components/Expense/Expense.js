@@ -48,14 +48,14 @@ import { getUserDetails } from '../../apis/user';
 
    triggerupdate = () => {
     console.log("Inside Trigger Update");
-    this.getExpense();
+    //this.getExpense();
     this.getTenExpenses(0);
     this.getDoughnut();
     this.getPieChart();
   }
 
     componentDidMount(){
-      this.getExpense();
+      //this.getExpense();
       this.getTenExpenses(0);
     }
 
@@ -69,10 +69,20 @@ import { getUserDetails } from '../../apis/user';
             backgroundColor:[
               '#FF6384',
               '#36A2EB',
+              'yellow',
+              'green',
+              'red',
+              'blue',
+              'orange',
             ],
             hoverBackgroundColor:[
               '#FF6384',
               '#36A2EB',
+              'yellow',
+              'green',
+              'red',
+              'blue',
+              'orange',
             ],
             borderWidth: 1
           }
