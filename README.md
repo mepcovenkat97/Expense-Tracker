@@ -1,4 +1,4 @@
-# Chat #
+# Expense Tracker #
 
 A simple Expense Tracker app build using __React__, __Node__, __Express__, __MongoDB__ and __Redux__.
 
@@ -28,4 +28,3 @@ npm i
 npm start
 ```
 3. Browse the URL __localhost:3000__ in the browser
-
